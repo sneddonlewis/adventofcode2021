@@ -7,7 +7,7 @@ fn main() {
     println!("{}", count);
 }
 
-fn count_increases(data: Vec<i32>)-> i32 {
+fn count_increases(data: Vec<i32>) -> i32 {
     let mut count = 0;
     let mut prev: i32 = data[0];
 
