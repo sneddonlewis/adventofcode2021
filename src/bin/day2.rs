@@ -1,17 +1,28 @@
 fn main() {
     println!("Day 2: Dive");
-    let instructions = "forward 5
+
+    let result = get_input().lines().map(parse_instructions).fold(
+        Position {
+            forward: 0,
+            depth: 0,
+        },
+        |mut acc, pos| {
+            acc.forward += pos.forward;
+            acc.depth += pos.depth;
+            acc
+        },
+    );
+
+    println!("{:?}", result);
+}
+
+fn get_input() -> &'static str {
+    "forward 5
 down 5
 forward 8
 up 3
 down 8
-forward 2";
-
-    let pos = Position::starting();
-    let delta = parse_instructions(instructions);
-    let result = pos.apply_delta(delta);
-
-    println!("{:?}", result);
+forward 2"
 }
 
 #[derive(Debug)]
@@ -20,24 +31,25 @@ struct Position {
     depth: i32,
 }
 
-impl Position {
-    fn starting() -> Position {
-        Position { forward: 0, depth: 0 }
-    }
-
-    fn apply_delta(&self, delta: Position) -> Position {
-        Position {
-            forward: self.forward + delta.forward,
-            depth: self.depth + delta.depth       
-        }
-    }
-}
-
 fn parse_instructions(instructions: &str) -> Position {
-    // split the str on newline
-    // split each segment on whitespace
-    // for key forward/backward +/- forward by amount
-    // for key up/down +/- depth amount
+    let (dir, amt) = instructions
+        .split_once(" ")
+        .expect("must contain whitespace");
+    let amount = str::parse::<i32>(amt).expect("must contain a number");
 
-    Position { forward: 5, depth: 5 }
+    match dir {
+        "forward" => Position {
+            forward: amount,
+            depth: 0,
+        },
+        "down" => Position {
+            forward: 0,
+            depth: amount,
+        },
+        "up" => Position {
+            forward: 0,
+            depth: amount * -1,
+        },
+        _ => panic!("incorrect instructions"),
+    }
 }
